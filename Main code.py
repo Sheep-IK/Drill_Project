@@ -12,16 +12,16 @@ close_up = load_image('Close Up Start.png')
 mx, my = 0, 0
 click = False
 start = True
-running = False
+mainpage = False
 def handle_event():
     global mx,my
-    global start, running
+    global start, mainpage
     events = get_events()
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
             mx, my = event.x, CANVAS_HEIGHT - event.y
             start = False
-            running = True
+            mainpage = True
         elif event.type == SDL_MOUSEMOTION:
             mx, my = event.x, CANVAS_HEIGHT - event.y
 
@@ -41,7 +41,7 @@ while start:
     update_canvas()
     delay(0.1)
 
-while running:
+while mainpage:
     print('running')
     clear_canvas()
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
