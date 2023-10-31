@@ -46,6 +46,9 @@ while mainpage:
     clear_canvas()
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
+    #원판 날아오기
+    #사격 코드
+    #사격 충돌 체크
 
     update_canvas()
     delay(0.05)
