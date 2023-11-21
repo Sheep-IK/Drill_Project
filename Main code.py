@@ -6,7 +6,7 @@ class plate:
     flying_image = None
     def __init__(self, x, y, cnt, flying_type = random.randint(1, 2)):
         if plate.flying_image == None:
-            plate.flying_image = load_image('Flying Disk.png')
+            plate.flying_image = load_image('Made_Plate.png')
         print('비행접시 슈우웅')
         self.flying_type = flying_type
         self.x, self.y = 0, 300
