@@ -4,13 +4,14 @@ import random
 class plate:
     #__cnt = 0   #멤버 변수
     flying_image = None
-    def __init__(self, x, y, cnt, flying_type):
+    def __init__(self, x, y, cnt, flying_type = random.randint(1, 2)):
         if plate.flying_image == None:
             plate.flying_image = load_image('Flying Disk.png')
         print('비행접시 슈우웅')
-        self.flying_type = random.randint(1,2)
+        self.flying_type = flying_type
+        self.x, self.y = 0, 300
 
-    def flying(self, x, y):
+    def flying(self):
         if self.flying_type == 1:
             self.x, self.y = 0, 300  #캔버스
         else:
@@ -68,15 +69,16 @@ while start:
 while mainpage:
     global plate_gather
     global head
-
+    global flying_type
     print('running')
     clear_canvas()
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
     #원판 날아오기
 
-    Plate = plate(0, 400, 1, 1)
-
+    Plate = plate(0, 400, 1, random.randint(1, 2))
+    plate.flying(Plate)
+    plate.draw(Plate)
     # plate_gather = [plate() for i in range(10)]
 
     #사격 코드
