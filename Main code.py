@@ -9,7 +9,8 @@ class plate:
             plate.flying_image = load_image('Made_Plate.png')
         print('비행접시 슈우웅')
         self.flying_type = flying_type
-        self.x, self.y = 0, 300
+        self.x, self.y = x, y
+        self.head = 0
 
     def flying(self):
         if self.flying_type == 1:
@@ -20,9 +21,46 @@ class plate:
     def draw(self):
         self.flying_image.draw(self.x, self.y)
 
+    def plate_type1(self):  # 왼쪽에서 오른쪽으로 이동
+
+        if self.flying_type == 1:
+            if self.head <= 60:
+                self.x += 8
+                self.y += 2
+            elif self.head > 60:
+                self.x += 8
+                self.y -= 2
+        elif self.flying_type == 2:
+            if self.head <= 60:
+                self.x -= 8
+                self.y += 2
+            elif self.head > 60:
+                self.x -= 8
+                self.y -= 2
+
+        self.head += 1
+
+
+
     def __del__(self):
         print("객체 소멸")
 
+
+
+
+# def plate_type2(x, y):  # 오른쪽에서 왼쪽으로 이동
+#     global head
+#
+#     while head <= 160:
+#         if head <= 80:
+#             x -= 5
+#             y += 2
+#         elif head > 80:
+#             x -= 5
+#             y -= 2
+#
+#         plate.draw(Plate)
+#         head += 1
 
 
 #화면 크기 설정
@@ -66,9 +104,10 @@ while start:
     update_canvas()
     delay(0.1)
 
+Plate = plate(0, 400, 1, random.randint(1, 2))
+Plate.flying()
 while mainpage:
     global plate_gather
-    global head
     global flying_type
     print('running')
     clear_canvas()
@@ -76,8 +115,10 @@ while mainpage:
 
     #원판 날아오기
 
-    Plate = plate(0, 400, 1, random.randint(1, 2))
-    plate.flying(Plate)
+    #Plate = plate(0, 400, 1, random.randint(1, 2))
+
+    Plate.plate_type1()
+    print(Plate.head) #test
     plate.draw(Plate)
     # plate_gather = [plate() for i in range(10)]
 
@@ -89,33 +130,4 @@ while mainpage:
 
 
 
-def plate_type1(x, y):  #왼쪽에서 오른쪽으로 이동
-    global head
-
-
-
-    while head <= 160:
-        if head <= 80:
-            x += 5
-            y += 2
-        elif head > 80:
-            x += 5
-            y -= 2
-
-        head += 1
-
-
-def plate_type2(x, y):  #오른쪽에서 왼쪽으로 이동
-    global head
-
-
-    while head <= 160:
-        if head <= 80:
-            x -= 5
-            y += 2
-        elif head > 80:
-            x -= 5
-            y -= 2
-
-        head += 1
 
