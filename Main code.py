@@ -21,7 +21,7 @@ class plate:
     def draw(self):
         self.flying_image.draw(self.x, self.y)
 
-    def plate_type1(self):  # 왼쪽에서 오른쪽으로 이동
+    def plate_type(self):  # 왼쪽에서 오른쪽으로 이동
 
         if self.flying_type == 1:
             if self.head <= 60:
@@ -39,6 +39,8 @@ class plate:
                 self.y -= 2
 
         self.head += 1
+
+
 
 
 
@@ -73,9 +75,10 @@ grass_base = load_image('Base Grass.png')
 close_up = load_image('Close Up Start.png')
 
 mx, my = 0, 0
-click = False
+maincheck = False
 start = True
 mainpage = False
+Pck = False
 def handle_event():
     global mx,my
     global start, mainpage
@@ -96,17 +99,18 @@ while start:
     start_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
     handle_event()
     if mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
-          if click == False:
+          if maincheck == False:
             close_up.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
-            print(click)
+            print(maincheck)
 
 
     update_canvas()
     delay(0.1)
 
-Plate = plate(0, 400, 1, random.randint(1, 2))
-Plate.flying()
+#Plate = plate(0, 400, 1, random.randint(1, 2))
+#Plate.flying()
 while mainpage:
+
     global plate_gather
     global flying_type
     print('running')
@@ -114,11 +118,17 @@ while mainpage:
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
     #원판 날아오기
-
-    #Plate = plate(0, 400, 1, random.randint(1, 2))
-
-    Plate.plate_type1()
+    if Pck == False:
+        Plate = plate(0, 400, 1, random.randint(1, 2))
+        Plate.flying()
+        print('원판 생성완료')
+        Pck = True
+    Plate.plate_type()
     print(Plate.head) #test
+    if Plate.head == 120:
+        plate.__del__(Plate)
+        Pck = False
+
     plate.draw(Plate)
     # plate_gather = [plate() for i in range(10)]
 
