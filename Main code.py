@@ -77,7 +77,9 @@ grass_base = load_image('Base Grass.png')
 close_up = load_image('Close Up Start.png')
 
 shotgun_targeting_s = load_image('shotgun_targeting_s.png')
-shotgun_targeting_m = load_image('shotgun_targeting_m.png')
+
+#shotgun_targeting_m = load_image('shotgun_targeting_m.png')
+shotgun_targeting_m = load_image('aim_m.png')
 
 
 #총기 이미지
@@ -167,7 +169,7 @@ while mainpage:
 
     #사격 코드
     handle_event()
-    if mx - 3 < mx2 and mx + 3 > mx2 and my - 3 < my2 and my + 3 > my2:
+    if mx - 15 < mx2 and mx + 15 > mx2 and my - 15 < my2 and my + 15 > my2:
         Move_Count_Timer += 1
         if Move_Count_Timer == 7:  # 브레이킹이 걸리는데까지 소요시간
             targeting_move = False
