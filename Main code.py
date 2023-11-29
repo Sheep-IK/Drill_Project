@@ -160,7 +160,6 @@ while mainpage:
         print(score)
         Plate_click = True
         Pck = False
-        plate.__del__(Plate)
         Shooting = False
 
 
