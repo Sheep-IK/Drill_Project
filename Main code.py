@@ -77,12 +77,17 @@ grass_base = load_image('Base Grass.png')
 close_up = load_image('Close Up Start.png')
 
 shotgun_targeting_s = load_image('shotgun_targeting_s.png')
+shotgun_targeting_m = load_image('shotgun_targeting_m.png')
+
 
 #총기 이미지
 
 
 mx, my = 0, 0
+mx2, my2 = 0, 0
+
 score = 0 #점수 계산
+Move_Count_Timer = 0 #브레이킹 계산
 
 maincheck = False
 start = True
@@ -90,11 +95,14 @@ mainpage = False
 Pck = False
 Plate_click = False
 Shooting = False
+targeting_move = False
 
 def handle_event():
-    global mx,my
+    global mx,my,mx2,my2
     global start, mainpage
     global Shooting
+    global targeting_move
+    global Move_Count_Timer
 
     events = get_events()
     for event in events:
@@ -106,12 +114,14 @@ def handle_event():
             Shooting = True
 
         elif event.type == SDL_MOUSEMOTION:
-            #Shooting = False
+            if mx != 0 and my != 0:
+                mx2, my2 = mx, my
 
             mx, my = event.x, CANVAS_HEIGHT - event.y
-            shotgun_targeting_s.draw(mx, my)
+
         elif event.type == SDL_MOUSEBUTTONUP:
             Shooting = False
+
 
 while start:
     clear_canvas()
@@ -156,11 +166,30 @@ while mainpage:
     # plate_gather = [plate() for i in range(10)]
 
     #사격 코드
+    handle_event()
+    if mx - 3 < mx2 and mx + 3 > mx2 and my - 3 < my2 and my + 3 > my2:
+        Move_Count_Timer += 1
+        if Move_Count_Timer == 7:  # 브레이킹이 걸리는데까지 소요시간
+            targeting_move = False
+            shotgun_targeting_s.draw(mx, my)
+            Move_Count_Timer = 0
 
+    else:
+        shotgun_targeting_m.draw(mx, my)
+        targeting_move = True
+        Move_Count_Timer = 0
+
+    # print(targeting_move) #test
+    # print(mx, mx2, my, my2) #test
+    print(Move_Count_Timer)  # test
+    if targeting_move == True:
+        shotgun_targeting_m.draw(mx, my)
+    else:
+        shotgun_targeting_s.draw(mx, my)
 
     #사격 충돌 체크
-    handle_event()
-    shotgun_targeting_s.draw(mx, my)
+
+
     if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
         # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
         print('원판 사격 명중!')
