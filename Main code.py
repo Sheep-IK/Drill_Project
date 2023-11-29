@@ -14,9 +14,11 @@ class plate:
 
     def flying(self):
         if self.flying_type == 1:
-            self.x, self.y = 0, 300  #캔버스
+            #self.x, self.y = 0, 300  #캔버스
+            self.x, self.y = 0, random.randint(270, 400)  #test
         else:
-            self.x, self.y = 800, 300 #캔버스
+            #self.x, self.y = 800, 300 #캔버스
+            self.x, self.y = 800, random.randint(270, 400)  # test
 
     def draw(self):
         self.flying_image.draw(self.x, self.y)
@@ -105,11 +107,11 @@ def handle_event():
 
         elif event.type == SDL_MOUSEMOTION:
             #Shooting = False
-            if start == True:
-                mx, my = event.x, CANVAS_HEIGHT - event.y
 
-
-
+            mx, my = event.x, CANVAS_HEIGHT - event.y
+            shotgun_targeting_s.draw(mx, my)
+        elif event.type == SDL_MOUSEBUTTONUP:
+            Shooting = False
 
 while start:
     clear_canvas()
@@ -171,7 +173,7 @@ while mainpage:
 
 
     update_canvas()
-    delay(0.05)
+    delay(0.02)
 
 
 
