@@ -74,6 +74,11 @@ start_base = load_image('Start Base.PNG')
 grass_base = load_image('Base Grass.png')
 close_up = load_image('Close Up Start.png')
 
+shotgun_targeting_s = load_image('shotgun_targeting_s.png')
+
+#총기 이미지
+
+
 mx, my = 0, 0
 score = 0 #점수 계산
 
@@ -153,6 +158,7 @@ while mainpage:
 
     #사격 충돌 체크
     handle_event()
+    shotgun_targeting_s.draw(mx, my)
     if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
         # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
         print('원판 사격 명중!')
