@@ -75,10 +75,13 @@ grass_base = load_image('Base Grass.png')
 close_up = load_image('Close Up Start.png')
 
 mx, my = 0, 0
+score = 0 #점수 계산
+
 maincheck = False
 start = True
 mainpage = False
 Pck = False
+Plate_click = False
 def handle_event():
     global mx,my
     global start, mainpage
@@ -86,8 +89,9 @@ def handle_event():
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
             mx, my = event.x, CANVAS_HEIGHT - event.y
-            start = False
-            mainpage = True
+            if start == True:
+                start = False
+                mainpage = True
         elif event.type == SDL_MOUSEMOTION:
             mx, my = event.x, CANVAS_HEIGHT - event.y
 
@@ -113,7 +117,7 @@ while mainpage:
 
     global plate_gather
     global flying_type
-    print('running')
+    # print('running') #test
     clear_canvas()
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
@@ -123,8 +127,12 @@ while mainpage:
         Plate.flying()
         print('원판 생성완료')
         Pck = True
+        Plate_click = False
+
     Plate.plate_type()
-    print(Plate.head) #test
+
+
+    #print(Plate.head) #test
     if Plate.head == 120:
         plate.__del__(Plate)
         Pck = False
@@ -133,7 +141,18 @@ while mainpage:
     # plate_gather = [plate() for i in range(10)]
 
     #사격 코드
+
+
     #사격 충돌 체크
+    handle_event()
+    if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False:
+        # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
+        print('원판 사격 명중!')
+        score += 10
+        print(score)
+        Plate_click = True
+        Pck = False
+        plate.__del__(Plate)
 
     update_canvas()
     delay(0.05)
