@@ -45,7 +45,7 @@ class plate:
 
 
     def __del__(self):
-        print("객체 소멸")
+        print("객체 소멸")  #test
 
 
 
@@ -82,9 +82,13 @@ start = True
 mainpage = False
 Pck = False
 Plate_click = False
+Shooting = False
+
 def handle_event():
     global mx,my
     global start, mainpage
+    global Shooting
+
     events = get_events()
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
@@ -92,8 +96,12 @@ def handle_event():
             if start == True:
                 start = False
                 mainpage = True
+            Shooting = True
+
         elif event.type == SDL_MOUSEMOTION:
-            mx, my = event.x, CANVAS_HEIGHT - event.y
+            #Shooting = False
+            if start == True:
+                mx, my = event.x, CANVAS_HEIGHT - event.y
 
 
 
@@ -145,7 +153,7 @@ while mainpage:
 
     #사격 충돌 체크
     handle_event()
-    if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False:
+    if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
         # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
         print('원판 사격 명중!')
         score += 10
@@ -153,6 +161,9 @@ while mainpage:
         Plate_click = True
         Pck = False
         plate.__del__(Plate)
+        Shooting = False
+
+
 
     update_canvas()
     delay(0.05)
