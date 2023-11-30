@@ -98,7 +98,7 @@ Pck = False
 Plate_click = False
 Shooting = False
 targeting_move = False
-Debugging = False
+Checking_mode = False
 
 def handle_event():
     global mx,my,mx2,my2
@@ -126,12 +126,12 @@ def handle_event():
         elif event.type == SDL_MOUSEBUTTONUP:
             Shooting = False
 
-        # elif event.type == SDL_KEYDOWN and event.type == SDLK_a:
-        #     print('keydown')
-        #     if not Checking_mode:
-        #         Checking_mode = True
-        #     elif Checking_mode:
-        #         Checking_mode = False
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_a:
+            print('keydown')
+            if not Checking_mode:
+                Checking_mode = True
+            elif Checking_mode:
+                Checking_mode = False
 
 
 
@@ -181,7 +181,7 @@ while mainpage:
     handle_event()
     if mx - 15 < mx2 and mx + 15 > mx2 and my - 15 < my2 and my + 15 > my2:
         Move_Count_Timer += 1
-        if Move_Count_Timer == 7:  # 브레이킹이 걸리는데까지 소요시간
+        if Move_Count_Timer == 20:  # 브레이킹이 걸리는데까지 소요시간
             targeting_move = False
             shotgun_targeting_s.draw(mx, my)
             Move_Count_Timer = 0
@@ -202,7 +202,7 @@ while mainpage:
     #사격 충돌 체크
 
     if targeting_move == True:
-        if Plate.x - 20 < mx and Plate.x + 20 > mx and Plate.y - 10 < my and Plate.y + 10 > my and Plate_click == False and Shooting == True:
+        if Plate.x - 10 < mx and Plate.x + 10 > mx and Plate.y - 5 < my and Plate.y + 5 > my and Plate_click == False and Shooting == True:
 
             print('원판 사격 명중!')
             score += 10
@@ -220,14 +220,13 @@ while mainpage:
             Pck = False
             Shooting = False
 
-    print(Debugging) #test
+    print(Checking_mode) #test
     #Test Box
-    if Debugging == True:
-        print('Debuging')
+    if Checking_mode == True:
         if targeting_move == True:
-            draw_rectangle(Plate.x - 20, Plate.y - 10, Plate.x + 20, Plate.y + 10)  # test
+            draw_rectangle(Plate.x - 10, Plate.y - 5, Plate.x + 10, Plate.y + 5)  # test
         else:
-            draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
+            draw_rectangle(Plate.x - 50, Plate.y - 27, Plate.x + 50, Plate.y + 27)  # test
 
     update_canvas()
     delay(0.02)
