@@ -79,6 +79,7 @@ Move_Count_Timer = 0 #브레이킹 계산
 maincheck = False
 start = True
 mainpage = False
+endpage = False
 Pck = False
 Plate_click = False
 Shooting = False
@@ -88,18 +89,21 @@ Checking_mode = False
 
 start_timer = 0
 TimeLimit = 60
+
 MotionCount = 0
 MotionDelay = 0
 
+
 def handle_event():
     global mx,my,mx2,my2
-    global start, mainpage
+    global start, mainpage, endpage
     global Shooting
     global targeting_move
     global Move_Count_Timer
     global Checking_mode
     global Hand_Motion
     global start_timer
+
 
     events = get_events()
     for event in events:
@@ -127,6 +131,9 @@ def handle_event():
                 Checking_mode = True
             elif Checking_mode:
                 Checking_mode = False
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_q:
+            mainpage = False
+            endpage = True
 
 
 
@@ -153,9 +160,17 @@ while mainpage:
     clear_canvas()
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
-    #타이머 생성
 
-    font.draw(10, CANVAS_HEIGHT - 10, f'(Time: {TimeLimit - get_time() + start_timer:.2f})', (0, 0, 0))
+    #타이머 생성
+    leftTime = TimeLimit - get_time() + start_timer
+    if leftTime < 0:
+        mainpage = False
+        endpage = True
+
+    font.draw(10, CANVAS_HEIGHT - 10, f'(Time: {leftTime:.2f})', (0, 0, 0))
+
+    #점수판 생성
+    font.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT - 10, f'(Score : {score})', (0, 0, 0))
 
     #원판 날아오기
     if Pck == False:
@@ -227,7 +242,7 @@ while mainpage:
         if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
             # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
             print('원판 사격 명중!')
-            score += 10
+            score += 15
             print(score)
             Plate_click = True
             Pck = False
@@ -244,6 +259,19 @@ while mainpage:
     update_canvas()
     delay(0.02)
 
+
+while endpage:
+    grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+
+    if score >= 300:
+        font.draw(CANVAS_WIDTH // 2 - 160, CANVAS_HEIGHT // 2, f'(Excellent!! "{score}" point)', (0, 0, 255))
+    elif score < 300 and score >= 100:
+        font.draw(CANVAS_WIDTH // 2 - 140, CANVAS_HEIGHT // 2, f'(Great!! "{score}" point)', (0, 0, 255))
+    elif score < 100:
+        font.draw(CANVAS_WIDTH // 2 - 160, CANVAS_HEIGHT // 2, f'(Are you a human..?? "{score}" point)', (0, 0, 255))
+
+    update_canvas()
+    delay(0.02)
 
 
 
