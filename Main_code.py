@@ -50,23 +50,6 @@ class plate:
         print("객체 소멸")  #test
 
 
-
-
-# def plate_type2(x, y):  # 오른쪽에서 왼쪽으로 이동
-#     global head
-#
-#     while head <= 160:
-#         if head <= 80:
-#             x -= 5
-#             y += 2
-#         elif head > 80:
-#             x -= 5
-#             y -= 2
-#
-#         plate.draw(Plate)
-#         head += 1
-
-
 #화면 크기 설정
 
 CANVAS_WIDTH, CANVAS_HEIGHT = 800, 600
@@ -82,6 +65,9 @@ shotgun_targeting_m = load_image('aim_m.png')
 #총기 이미지
 #hand_gun = load_image('300HandGun_sheet.png')
 hand_gun = load_image('BGHandGun_sheet.png')
+
+#타이머 폰트
+font = load_font('ENCR10B.TTF', 20)
 
 
 mx, my = 0, 0
@@ -99,6 +85,9 @@ Shooting = False
 Hand_Motion = False
 targeting_move = False
 Checking_mode = False
+
+start_timer = 0
+TimeLimit = 60
 MotionCount = 0
 MotionDelay = 0
 
@@ -110,6 +99,7 @@ def handle_event():
     global Move_Count_Timer
     global Checking_mode
     global Hand_Motion
+    global start_timer
 
     events = get_events()
     for event in events:
@@ -118,6 +108,7 @@ def handle_event():
             if start == True:
                 start = False
                 mainpage = True
+                start_timer = get_time()
             Shooting = True
             Hand_Motion = True
 
@@ -161,6 +152,10 @@ while mainpage:
     # print('running') #test
     clear_canvas()
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+
+    #타이머 생성
+
+    font.draw(10, CANVAS_HEIGHT - 10, f'(Time: {TimeLimit - get_time() + start_timer:.2f})', (0, 0, 0))
 
     #원판 날아오기
     if Pck == False:
