@@ -98,6 +98,7 @@ Pck = False
 Plate_click = False
 Shooting = False
 targeting_move = False
+Debugging = False
 
 def handle_event():
     global mx,my,mx2,my2
@@ -105,6 +106,7 @@ def handle_event():
     global Shooting
     global targeting_move
     global Move_Count_Timer
+    global Checking_mode
 
     events = get_events()
     for event in events:
@@ -123,6 +125,14 @@ def handle_event():
 
         elif event.type == SDL_MOUSEBUTTONUP:
             Shooting = False
+
+        # elif event.type == SDL_KEYDOWN and event.type == SDLK_a:
+        #     print('keydown')
+        #     if not Checking_mode:
+        #         Checking_mode = True
+        #     elif Checking_mode:
+        #         Checking_mode = False
+
 
 
 while start:
@@ -183,7 +193,7 @@ while mainpage:
 
     # print(targeting_move) #test
     # print(mx, mx2, my, my2) #test
-    print(Move_Count_Timer)  # test
+    # print(Move_Count_Timer)  # test
     if targeting_move == True:
         shotgun_targeting_m.draw(mx, my)
     else:
@@ -191,17 +201,33 @@ while mainpage:
 
     #사격 충돌 체크
 
+    if targeting_move == True:
+        if Plate.x - 20 < mx and Plate.x + 20 > mx and Plate.y - 10 < my and Plate.y + 10 > my and Plate_click == False and Shooting == True:
 
-    if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
-        # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
-        print('원판 사격 명중!')
-        score += 10
-        print(score)
-        Plate_click = True
-        Pck = False
-        Shooting = False
+            print('원판 사격 명중!')
+            score += 10
+            print(score)
+            Plate_click = True
+            Pck = False
+            Shooting = False
+    elif targeting_move == False:
+        if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
+            # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
+            print('원판 사격 명중!')
+            score += 10
+            print(score)
+            Plate_click = True
+            Pck = False
+            Shooting = False
 
-
+    print(Debugging) #test
+    #Test Box
+    if Debugging == True:
+        print('Debuging')
+        if targeting_move == True:
+            draw_rectangle(Plate.x - 20, Plate.y - 10, Plate.x + 20, Plate.y + 10)  # test
+        else:
+            draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
 
     update_canvas()
     delay(0.02)
