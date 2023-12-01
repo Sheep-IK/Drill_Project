@@ -79,6 +79,7 @@ mx2, my2 = 0, 0
 score = 0 #점수 계산
 Move_Count_Timer = 0 #브레이킹 계산
 
+cycle = True
 maincheck = False
 start = True
 mainpage = False
@@ -106,13 +107,16 @@ def handle_event():
     global Checking_mode
     global Hand_Motion
     global start_timer
+    global TimeLimit
+    global score
+    global Pck
 
 
     events = get_events()
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
             mx, my = event.x, CANVAS_HEIGHT - event.y
-            if start == True:
+            if start == True and mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
                 start = False
                 mainpage = True
                 start_timer = get_time()
@@ -134,151 +138,160 @@ def handle_event():
                 Checking_mode = True
             elif Checking_mode:
                 Checking_mode = False
+
         elif event.type == SDL_KEYDOWN and event.key == SDLK_q:
             mainpage = False
             endpage = True
 
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_r:
+            start = True
+            mainpage = False
+            endpage = False
+
+            Pck = False
+            TimeLimit = 60
+            score = 0
 
 
-while start:
-    clear_canvas()
-    start_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
-    handle_event()
-    if mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
-          if maincheck == False:
-            close_up.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
-            #print(maincheck) #test
+
+while cycle:
+    while start:
+        clear_canvas()
+        start_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+        handle_event()
+        if mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
+              if maincheck == False:
+                close_up.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+                #print('maincheck') #test
 
 
-    update_canvas()
-    delay(0.1)
-
-#Plate = plate(0, 400, 1, random.randint(1, 2))
-#Plate.flying()
-while mainpage:
-
-    global plate_gather
-    global flying_type
-    # print('running') #test
-    clear_canvas()
-    grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+        update_canvas()
+        delay(0.1)
 
 
-    #타이머 생성
-    leftTime = TimeLimit - get_time() + start_timer
-    if leftTime < 0:
-        mainpage = False
-        endpage = True
+    while mainpage:
 
-    font.draw(10, CANVAS_HEIGHT - 10, f'(Time: {leftTime:.2f})', (0, 0, 0))
-
-    #점수판 생성
-    font.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT - 10, f'(Score : {score})', (0, 0, 0))
-
-    #원판 날아오기
-    if Pck == False:
-        Plate = plate(0, 400, 1, random.randint(1, 2))
-        Plate.flying()
-        print('원판 생성완료')
-        Pck = True
-        Plate_click = False
-
-    Plate.plate_type()
+        global plate_gather
+        global flying_type
+        # print('running') #test
+        clear_canvas()
+        grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
 
-    #print(Plate.head) #test
-    if Plate.head == 120:
-        plate.__del__(Plate)
-        Pck = False
+        #타이머 생성
+        leftTime = TimeLimit - get_time() + start_timer
+        if leftTime < 0:
+            mainpage = False
+            endpage = True
 
-    plate.draw(Plate)
-    # plate_gather = [plate() for i in range(10)]
+        font.draw(10, CANVAS_HEIGHT - 10, f'(Time: {leftTime:.2f})', (0, 0, 0))
 
-    #사격 코드
-    handle_event()
+        #점수판 생성
+        font.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT - 10, f'(Score : {score})', (0, 0, 0))
 
-    if Hand_Motion: #사격 모션 코드
-        hand_gun.clip_draw(MotionCount*115, 0, 115, 185, CANVAS_WIDTH // 2, 100, 255, 300)
-        if MotionDelay < 1:
-            MotionDelay += 1
+        #원판 날아오기
+        if Pck == False:
+            Plate = plate(0, 400, 1, random.randint(1, 2))
+            Plate.flying()
+            print('원판 생성완료')
+            Pck = True
+            Plate_click = False
+
+        Plate.plate_type()
+
+
+        #print(Plate.head) #test
+        if Plate.head == 120:
+            plate.__del__(Plate)
+            Pck = False
+
+        plate.draw(Plate)
+
+        #사격 코드
+        handle_event()
+
+        if Hand_Motion: #사격 모션 코드
+            hand_gun.clip_draw(MotionCount*115, 0, 115, 185, CANVAS_WIDTH // 2 + 100, 100, 255, 300)
+            if MotionDelay < 1:
+                MotionDelay += 1
+            else:
+                MotionDelay = 0
+                MotionCount += 1
+
+            if MotionCount == 14:
+                MotionCount = 0
+                Hand_Motion = False
         else:
-            MotionDelay = 0
-            MotionCount += 1
+            hand_gun.clip_draw(0, 0, 115, 185, CANVAS_WIDTH // 2 + 100, 100, 255, 300)
 
-        if MotionCount == 14:
-            MotionCount = 0
-            Hand_Motion = False
-    else:
-        hand_gun.clip_draw(0, 0, 115, 185, CANVAS_WIDTH // 2, 100, 255, 300)
+        if mx - 15 < mx2 and mx + 15 > mx2 and my - 15 < my2 and my + 15 > my2:
+            Move_Count_Timer += 1
+            if Move_Count_Timer == 10:  # 브레이킹이 걸리는데까지 소요시간
+                targeting_move = False
+                shotgun_targeting_s.draw(mx, my)
+                Move_Count_Timer = 0
 
-    if mx - 15 < mx2 and mx + 15 > mx2 and my - 15 < my2 and my + 15 > my2:
-        Move_Count_Timer += 1
-        if Move_Count_Timer == 10:  # 브레이킹이 걸리는데까지 소요시간
-            targeting_move = False
-            shotgun_targeting_s.draw(mx, my)
+        else:
+            shotgun_targeting_m.draw(mx, my)
+            targeting_move = True
             Move_Count_Timer = 0
 
-    else:
-        shotgun_targeting_m.draw(mx, my)
-        targeting_move = True
-        Move_Count_Timer = 0
-
-    # print(targeting_move) #test
-    # print(mx, mx2, my, my2) #test
-    # print(Move_Count_Timer)  # test
-    if targeting_move == True:
-        shotgun_targeting_m.draw(mx, my)
-    else:
-        shotgun_targeting_s.draw(mx, my)
-
-    #사격 충돌 체크
-
-    if targeting_move == True:
-        if Plate.x - 10 < mx and Plate.x + 10 > mx and Plate.y - 5 < my and Plate.y + 5 > my and Plate_click == False and Shooting == True:
-            print('원판 사격 명중!')
-            score += 10
-            print(score)
-            Plate_click = True
-            Pck = False
-            Shooting = False
-    elif targeting_move == False:
-        if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
-            # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
-            print('원판 사격 명중!')
-            score += 15
-            print(score)
-            Plate_click = True
-            Pck = False
-            Shooting = False
-
-    print(Checking_mode) #test
-    #Test Box
-    if Checking_mode == True:
+        # print(targeting_move) #test
+        # print(mx, mx2, my, my2) #test
+        # print(Move_Count_Timer)  # test
         if targeting_move == True:
-            draw_rectangle(Plate.x - 10, Plate.y - 5, Plate.x + 10, Plate.y + 5)  # test
+            shotgun_targeting_m.draw(mx, my)
         else:
-            draw_rectangle(Plate.x - 50, Plate.y - 27, Plate.x + 50, Plate.y + 27)  # test
+            shotgun_targeting_s.draw(mx, my)
 
-    update_canvas()
-    delay(0.02)
+        #사격 충돌 체크
+
+        if targeting_move == True:
+            if Plate.x - 10 < mx and Plate.x + 10 > mx and Plate.y - 5 < my and Plate.y + 5 > my and Plate_click == False and Shooting == True:
+                print('원판 사격 명중!')
+                score += 10
+                print(score)
+                Plate_click = True
+                Pck = False
+                Shooting = False
+        elif targeting_move == False:
+            if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
+                # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
+                print('원판 사격 명중!')
+                score += 15
+                print(score)
+                Plate_click = True
+                Pck = False
+                Shooting = False
+
+        print(Checking_mode) #test
+        #Test Box
+        if Checking_mode == True:
+            if targeting_move == True:
+                draw_rectangle(Plate.x - 10, Plate.y - 5, Plate.x + 10, Plate.y + 5)  # test
+            else:
+                draw_rectangle(Plate.x - 50, Plate.y - 27, Plate.x + 50, Plate.y + 27)  # test
+
+        update_canvas()
+        delay(0.02)
 
 
-while endpage:
-    grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+    while endpage:
+        grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
-    sign.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2 - 100, CANVAS_WIDTH, CANVAS_HEIGHT)
-    if score >= 300:
-        score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2, f'Excellent!!', (255, 0, 0))
-        score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
-    elif score < 300 and score >= 100:
-        score_font.draw(CANVAS_WIDTH // 2 - 50, CANVAS_HEIGHT // 2, f'Great!!', (255, 0, 0))
-        score_font.draw(CANVAS_WIDTH // 2 - 100, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
-    elif score < 100:
-        score_font.draw(CANVAS_WIDTH // 2 - 180, CANVAS_HEIGHT // 2, f'Are you a human..?? ', (255, 0, 0))
-        score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
-
-    update_canvas()
-    delay(0.02)
+        sign.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2 - 100, CANVAS_WIDTH, CANVAS_HEIGHT)
+        if score >= 300:
+            score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2, f'Excellent!!', (255, 0, 0))
+            score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
+        elif score < 300 and score >= 100:
+            score_font.draw(CANVAS_WIDTH // 2 - 50, CANVAS_HEIGHT // 2, f'Great!!', (255, 0, 0))
+            score_font.draw(CANVAS_WIDTH // 2 - 100, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
+        elif score < 100:
+            score_font.draw(CANVAS_WIDTH // 2 - 180, CANVAS_HEIGHT // 2, f'Are you a human..?? ', (255, 0, 0))
+            score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
+        handle_event()
+        update_canvas()
+        delay(0.02)
 
 
 
