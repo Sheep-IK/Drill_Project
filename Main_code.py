@@ -67,11 +67,34 @@ shotgun_targeting_m = load_image('aim_m.png')
 hand_gun = load_image('BGHandGun_sheet.png')
 
 #폰트
+level_font = load_font('Ephesis-Regular.ttf', 60)
 font = load_font('ENCR10B.TTF', 20)
 score_font = load_font('ENCR10B.TTF', 40)
 
-
 sign = load_image('sign.png') #표지판
+
+
+#각종 사운드
+click_sound = load_wav('click_sound.wav')
+click_sound.set_volume(30)
+Gun1_sound = load_wav('Gun1.wav')
+Gun2_sound = load_wav('Gun2.wav')
+Gun3_sound = load_wav('Gun3.wav')
+Gun1_sound.set_volume(20)
+Gun2_sound.set_volume(20)
+Gun3_sound.set_volume(20)
+
+start_sound = load_wav('classic.wav')
+main_sound = load_wav('spring.wav')
+
+low_score = load_wav('low_score.wav')
+middle_score = load_wav('middle_score.wav')
+high_score = load_wav('high_score.wav')
+
+low_score.set_volume(50)
+middle_score.set_volume(150)
+high_score.set_volume(50)
+
 
 mx, my = 0, 0
 mx2, my2 = 0, 0
@@ -81,7 +104,7 @@ Move_Count_Timer = 0 #브레이킹 계산
 
 cycle = True
 maincheck = False
-start = True
+startpage = True
 mainpage = False
 endpage = False
 Pck = False
@@ -90,6 +113,19 @@ Shooting = False
 Hand_Motion = False
 targeting_move = False
 Checking_mode = False
+First_shoot = True
+
+Easy_mode = True
+Normal_mode = False
+Hard_mode = False
+
+Gun_mode1 = True
+Gun_mode2 = False
+Gun_mode3 = False
+
+start_music = True
+middle_music = False
+end_sound = True
 
 start_timer = 0
 TimeLimit = 60
@@ -100,7 +136,8 @@ MotionDelay = 0
 
 def handle_event():
     global mx,my,mx2,my2
-    global start, mainpage, endpage
+    global startpage, mainpage, endpage
+    global Easy_mode, Normal_mode, Hard_mode
     global Shooting
     global targeting_move
     global Move_Count_Timer
@@ -110,18 +147,46 @@ def handle_event():
     global TimeLimit
     global score
     global Pck
-
+    global Gun_mode1, Gun_mode2, Gun_mode3
+    global First_shoot
+    global end_sound
 
     events = get_events()
     for event in events:
         if event.type == SDL_MOUSEBUTTONDOWN:
             mx, my = event.x, CANVAS_HEIGHT - event.y
-            if start == True and mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
-                start = False
+            if startpage == True and mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
+                click_sound.play()
+                startpage = False
                 mainpage = True
                 start_timer = get_time()
-            Shooting = True
-            Hand_Motion = True
+            if mainpage == True:
+                if First_shoot:
+                    First_shoot = False
+                else:
+                    Shooting = True
+                    Hand_Motion = True
+                    Gun_sound()
+
+            if startpage == True and mx >= 40 and mx <= 200 and my >= 30 and my <= 90:
+                click_sound.play()
+                Easy_mode = True
+                Normal_mode = False
+                Hard_mode = False
+                print('Easy_mode')
+            elif startpage == True and mx >= 300 and mx <= 480 and my >= 30 and my <= 90:
+                click_sound.play()
+                Easy_mode = False
+                Normal_mode = True
+                Hard_mode = False
+                print('Normal_mode')
+            elif startpage == True and mx >= 590 and mx <= 750 and my >= 30 and my <= 90:
+                click_sound.play()
+                Easy_mode = False
+                Normal_mode = False
+                Hard_mode = True
+                print('Hard_mode')
+
 
         elif event.type == SDL_MOUSEMOTION:
             if mx != 0 and my != 0:
@@ -140,29 +205,75 @@ def handle_event():
                 Checking_mode = False
 
         elif event.type == SDL_KEYDOWN and event.key == SDLK_q:
-            mainpage = False
-            endpage = True
+            if startpage == True or endpage == True:
+                quit()
+            else:
+                mainpage = False
+                endpage = True
 
         elif event.type == SDL_KEYDOWN and event.key == SDLK_r:
-            start = True
+            startpage = True
             mainpage = False
             endpage = False
 
             Pck = False
             TimeLimit = 60
             score = 0
+            First_shoot = True
+            end_sound = True
+
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_g:
+            if Gun_mode1:
+                Gun_mode1 = False
+                Gun_mode2 = True
+                Gun2_sound.play()
+            elif Gun_mode2:
+                Gun_mode2 = False
+                Gun_mode3 = True
+                Gun3_sound.play()
+            elif Gun_mode3:
+                Gun_mode3 = False
+                Gun_mode1 = True
+                Gun1_sound.play()
+
+def Gun_sound():
+    if Gun_mode1:
+        Gun1_sound.play()
+    elif Gun_mode2:
+        Gun2_sound.play()
+    elif Gun_mode3:
+        Gun3_sound.play()
 
 
+
+start_sound.repeat_play()
+main_sound.play()
 
 while cycle:
-    while start:
+    while startpage:
+        start_sound.set_volume(32)
+        main_sound.set_volume(0)
         clear_canvas()
         start_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+        level_font.draw(50, 60, f'Easy!', (0, 0, 0))
+        level_font.draw(CANVAS_WIDTH // 2 - 100, 60, f'Normal!', (0, 0, 0))
+        level_font.draw(CANVAS_WIDTH - 200, 60, f'Hard!', (0, 0, 0))
+
         handle_event()
         if mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
               if maincheck == False:
                 close_up.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
                 #print('maincheck') #test
+
+        if Easy_mode:
+            draw_rectangle(40, 30, 200, 90)
+        elif Normal_mode:
+            draw_rectangle(300, 30, 480, 90)
+        elif Hard_mode:
+            draw_rectangle(590, 30, 750, 90)
+
+
+
 
 
         update_canvas()
@@ -170,6 +281,10 @@ while cycle:
 
 
     while mainpage:
+        start_sound.set_volume(0)
+        main_sound.set_volume(36)
+        print(middle_music)
+
 
         global plate_gather
         global flying_type
@@ -278,6 +393,16 @@ while cycle:
 
     while endpage:
         grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+        if end_sound == True:
+            end_sound = False
+            if score >= 300:
+                high_score.play()
+            elif score < 300 and score >= 100:
+                middle_score.play()
+            elif score < 100:
+                low_score.play()
+
+
 
         sign.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2 - 100, CANVAS_WIDTH, CANVAS_HEIGHT)
         if score >= 300:
