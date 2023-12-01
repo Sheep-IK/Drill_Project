@@ -66,9 +66,12 @@ shotgun_targeting_m = load_image('aim_m.png')
 #hand_gun = load_image('300HandGun_sheet.png')
 hand_gun = load_image('BGHandGun_sheet.png')
 
-#타이머 폰트
+#폰트
 font = load_font('ENCR10B.TTF', 20)
+score_font = load_font('ENCR10B.TTF', 40)
 
+
+sign = load_image('sign.png') #표지판
 
 mx, my = 0, 0
 mx2, my2 = 0, 0
@@ -263,12 +266,16 @@ while mainpage:
 while endpage:
     grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
+    sign.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2 - 100, CANVAS_WIDTH, CANVAS_HEIGHT)
     if score >= 300:
-        font.draw(CANVAS_WIDTH // 2 - 160, CANVAS_HEIGHT // 2, f'(Excellent!! "{score}" point)', (0, 0, 255))
+        score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2, f'Excellent!!', (255, 0, 0))
+        score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
     elif score < 300 and score >= 100:
-        font.draw(CANVAS_WIDTH // 2 - 140, CANVAS_HEIGHT // 2, f'(Great!! "{score}" point)', (0, 0, 255))
+        score_font.draw(CANVAS_WIDTH // 2 - 50, CANVAS_HEIGHT // 2, f'Great!!', (255, 0, 0))
+        score_font.draw(CANVAS_WIDTH // 2 - 100, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
     elif score < 100:
-        font.draw(CANVAS_WIDTH // 2 - 160, CANVAS_HEIGHT // 2, f'(Are you a human..?? "{score}" point)', (0, 0, 255))
+        score_font.draw(CANVAS_WIDTH // 2 - 180, CANVAS_HEIGHT // 2, f'Are you a human..?? ', (255, 0, 0))
+        score_font.draw(CANVAS_WIDTH // 2 - 120, CANVAS_HEIGHT // 2 - 40, f'"{score}"point!', (0, 0, 255))
 
     update_canvas()
     delay(0.02)
