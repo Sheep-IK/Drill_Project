@@ -1,16 +1,20 @@
 from pico2d import *
 import random
 
+P_speed = 6
+P_max = 150
 class plate:
     #__cnt = 0   #멤버 변수
     flying_image = None
-    def __init__(self, x, y, cnt, flying_type = random.randint(1, 2)):
+    def __init__(self, x, y, cnt, flying_type = random.randint(1, 2),P_down = random.randint(55, 70)):
         if plate.flying_image == None:
             plate.flying_image = load_image('Made_Plate.png')
         print('비행접시 슈우웅')
         self.flying_type = flying_type
         self.x, self.y = x, y
         self.head = 0
+        self.P_down = P_down
+
 
     def flying(self):
         if self.flying_type == 1:
@@ -26,18 +30,18 @@ class plate:
     def plate_type(self):  # 왼쪽에서 오른쪽으로 이동
 
         if self.flying_type == 1:
-            if self.head <= 60:
-                self.x += 8
+            if self.head <= self.P_down:
+                self.x += P_speed
                 self.y += 2
-            elif self.head > 60:
-                self.x += 8
+            elif self.head > self.P_down:
+                self.x += P_speed
                 self.y -= 2
         elif self.flying_type == 2:
-            if self.head <= 60:
-                self.x -= 8
+            if self.head <= self.P_down:
+                self.x -= P_speed
                 self.y += 2
-            elif self.head > 60:
-                self.x -= 8
+            elif self.head > self.P_down:
+                self.x -= P_speed
                 self.y -= 2
 
         self.head += 1
@@ -127,6 +131,9 @@ start_music = True
 middle_music = False
 end_sound = True
 
+moveingP_point = 10
+point = 15
+
 start_timer = 0
 TimeLimit = 60
 
@@ -150,6 +157,11 @@ def handle_event():
     global Gun_mode1, Gun_mode2, Gun_mode3
     global First_shoot
     global end_sound
+    global point
+    global moveingP_point
+    global P_speed
+    global P_down
+    global P_max
 
     events = get_events()
     for event in events:
@@ -173,18 +185,31 @@ def handle_event():
                 Easy_mode = True
                 Normal_mode = False
                 Hard_mode = False
+                moveingP_point = 10
+                point = 15
+                P_speed = 6
+                P_max = 150
                 print('Easy_mode')
             elif startpage == True and mx >= 300 and mx <= 480 and my >= 30 and my <= 90:
                 click_sound.play()
                 Easy_mode = False
                 Normal_mode = True
                 Hard_mode = False
+                moveingP_point = 7
+                point = 20
+                P_speed = 8
+                P_max = 120
                 print('Normal_mode')
             elif startpage == True and mx >= 590 and mx <= 750 and my >= 30 and my <= 90:
                 click_sound.play()
                 Easy_mode = False
                 Normal_mode = False
                 Hard_mode = True
+                moveingP_point = 5
+                point = 30
+                P_speed = 10
+                P_max = 100
+
                 print('Hard_mode')
 
 
@@ -263,6 +288,9 @@ while cycle:
         if mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
               if maincheck == False:
                 close_up.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+                level_font.draw(50, 60, f'Easy!', (0, 0, 0))
+                level_font.draw(CANVAS_WIDTH // 2 - 100, 60, f'Normal!', (0, 0, 0))
+                level_font.draw(CANVAS_WIDTH - 200, 60, f'Hard!', (0, 0, 0))
                 #print('maincheck') #test
 
         if Easy_mode:
@@ -311,12 +339,20 @@ while cycle:
             print('원판 생성완료')
             Pck = True
             Plate_click = False
+            Plate.P_down -= random.randint(-10, 10)
+
+            if Easy_mode:
+                pass
+            elif Normal_mode:
+                Plate.P_down -= 10
+            elif Hard_mode:
+                Plate.P_down -= 20
 
         Plate.plate_type()
 
 
         #print(Plate.head) #test
-        if Plate.head == 120:
+        if Plate.head == P_max:
             plate.__del__(Plate)
             Pck = False
 
@@ -364,7 +400,7 @@ while cycle:
         if targeting_move == True:
             if Plate.x - 10 < mx and Plate.x + 10 > mx and Plate.y - 5 < my and Plate.y + 5 > my and Plate_click == False and Shooting == True:
                 print('원판 사격 명중!')
-                score += 10
+                score += moveingP_point
                 print(score)
                 Plate_click = True
                 Pck = False
@@ -373,7 +409,7 @@ while cycle:
             if Plate.x - 50 < mx and Plate.x + 50 > mx and Plate.y -27 < my and Plate.y + 27 > my and Plate_click == False and Shooting == True:
                 # draw_rectangle(Plate.x - 50 , Plate.y - 27, Plate.x+ 50, Plate.y + 27) #test
                 print('원판 사격 명중!')
-                score += 15
+                score += point
                 print(score)
                 Plate_click = True
                 Pck = False
