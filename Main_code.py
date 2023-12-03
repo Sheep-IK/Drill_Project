@@ -3,6 +3,40 @@ import random
 
 P_speed = 6
 P_max = 150
+
+class bird:
+    bird_image = None
+
+    def __init__(self, x, y, cnt, flying_type=random.randint(1, 2), P_down=random.randint(55, 70)):
+        if bird.bird_image == None:
+            bird.bird_image = load_image('bird_long.png')
+        print('새한마리 슈우웅')
+        self.flying_type = flying_type
+        self.x, self.y = x, y
+        self.head = 0
+        self.P_down = P_down
+
+    def flying(self):
+        if self.flying_type == 1:
+            self.x, self.y = 0, 500  #캔버스
+            self.y = random.randint(480, 550)
+        else:
+            self.x, self.y = 800, 500 #캔버스
+            self.y = random.randint(480, 550)
+
+    def draw(self):
+        self.bird_image.draw(self.x, self.y)
+
+    def plate_type(self):  # 왼쪽에서 오른쪽으로 이동
+        if self.flying_type == 1:
+            self.x += P_speed
+        elif self.flying_type == 2:
+            self.x -= P_speed
+
+
+    def __del__(self):
+        print("새 소멸")  # test
+
 class plate:
     #__cnt = 0   #멤버 변수
     flying_image = None
@@ -66,6 +100,7 @@ close_up = load_image('Close Up Start.png')
 shotgun_targeting_s = load_image('shotgun_targeting_s.png')
 shotgun_targeting_m = load_image('aim_m.png')
 
+
 #총기 이미지
 #hand_gun = load_image('300HandGun_sheet.png')
 hand_gun = load_image('BGHandGun_sheet.png')
@@ -112,6 +147,9 @@ startpage = True
 mainpage = False
 endpage = False
 Pck = False
+
+Fbird = True
+Bck = False
 Plate_click = False
 Shooting = False
 Hand_Motion = False
@@ -137,8 +175,11 @@ point = 15
 start_timer = 0
 TimeLimit = 60
 
+BirdMotion = 0
 MotionCount = 0
 MotionDelay = 0
+
+Count = 0
 
 
 def handle_event():
@@ -153,7 +194,7 @@ def handle_event():
     global start_timer
     global TimeLimit
     global score
-    global Pck
+    global Pck, Bck
     global Gun_mode1, Gun_mode2, Gun_mode3
     global First_shoot
     global end_sound
@@ -242,10 +283,12 @@ def handle_event():
             endpage = False
 
             Pck = False
+            Bck = False
             TimeLimit = 60
             score = 0
             First_shoot = True
             end_sound = True
+
 
         elif event.type == SDL_KEYDOWN and event.key == SDLK_g:
             if Gun_mode1:
@@ -272,7 +315,7 @@ def Gun_sound():
 
 
 start_sound.repeat_play()
-main_sound.play()
+main_sound.repeat_play()
 
 while cycle:
     while startpage:
@@ -302,8 +345,6 @@ while cycle:
 
 
 
-
-
         update_canvas()
         delay(0.1)
 
@@ -311,7 +352,7 @@ while cycle:
     while mainpage:
         start_sound.set_volume(0)
         main_sound.set_volume(36)
-        print(middle_music)
+        #print(middle_music)
 
 
         global plate_gather
@@ -332,8 +373,41 @@ while cycle:
         #점수판 생성
         font.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT - 10, f'(Score : {score})', (0, 0, 0))
 
+
+        if Fbird:
+            Bird = bird(0, 500, 1, random.randint(1, 2))
+            Fbird = False
+
+        if Count >= 2 and Bck == False:
+            Bird = bird(0, 500, 1, random.randint(1, 2))
+            Bird.plate_type()
+            Bird.flying()
+            Count = 0
+            Bck = True
+            print('Bird 생성완료')
+
+
+        if Bird.head >= 3 * P_max:
+            Bck = False
+
+
+        if Bck:
+            if BirdMotion == 13:
+                BirdMotion = 0
+            else:
+                BirdMotion += 1
+            Bird.head += 1
+
+            if Bird.flying_type == 1:
+                Bird.bird_image.clip_draw(BirdMotion*145, 0, 145, 125, Bird.x, Bird.y, 70, 70)
+                Bird.x += 4
+            else:
+                Bird.bird_image.clip_composite_draw(BirdMotion * 145, 0, 145, 125, 0, 'h', Bird.x, Bird.y, 70, 70)
+                Bird.x -= 4
+
         #원판 날아오기
         if Pck == False:
+            Count += 1
             Plate = plate(0, 400, 1, random.randint(1, 2))
             Plate.flying()
             print('원판 생성완료')
@@ -415,7 +489,7 @@ while cycle:
                 Pck = False
                 Shooting = False
 
-        print(Checking_mode) #test
+        #print(Checking_mode) #test
         #Test Box
         if Checking_mode == True:
             if targeting_move == True:
