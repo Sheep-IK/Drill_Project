@@ -1,8 +1,18 @@
 from pico2d import *
 import random
 
-P_speed = 6
-P_max = 150
+
+PIXEL_PER_METER = (20.0 / 0.3)
+PLATE_SPEED_KMPH = 10.0
+PLATE_SPEED_MPM = (PLATE_SPEED_KMPH * 1000.0 / 60.0)
+PLATE_SPEED_MPS = (PLATE_SPEED_MPM / 60.0)
+PLATE_SPEED_PPS = (PLATE_SPEED_MPS * PIXEL_PER_METER)
+
+TIME_PER_ACTION = 0.4
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 6
+P_speed = 6 // (PLATE_SPEED_KMPH // 10)
+P_max = 150 // (PLATE_SPEED_KMPH // 10)
 
 class bird:
     bird_image = None
@@ -173,13 +183,14 @@ moveingP_point = 10
 point = 15
 
 start_timer = 0
-TimeLimit = 60
+TimeLimit = 30
 
 BirdMotion = 0
 MotionCount = 0
 MotionDelay = 0
 
 Count = 0
+
 
 
 def handle_event():
@@ -284,7 +295,7 @@ def handle_event():
 
             Pck = False
             Bck = False
-            TimeLimit = 60
+            TimeLimit = 30
             score = 0
             First_shoot = True
             end_sound = True
@@ -346,7 +357,7 @@ while cycle:
 
 
         update_canvas()
-        delay(0.1)
+        delay(0.2)
 
 
     while mainpage:
@@ -505,12 +516,13 @@ while cycle:
         grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
         if end_sound == True:
             end_sound = False
-            if score >= 300:
+            if score >= 500:
                 high_score.play()
-            elif score < 300 and score >= 100:
+            elif score < 500 and score >= 150:
                 middle_score.play()
-            elif score < 100:
+            elif score < 150:
                 low_score.play()
+
 
 
 
