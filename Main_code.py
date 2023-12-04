@@ -19,7 +19,7 @@ class bird:
 
     def __init__(self, x, y, cnt, flying_type=random.randint(1, 2), P_down=random.randint(55, 70)):
         if bird.bird_image == None:
-            bird.bird_image = load_image('bird_long.png')
+            bird.bird_image = load_image('bird_animation.png')
         print('새한마리 슈우웅')
         self.flying_type = flying_type
         self.x, self.y = x, y
@@ -410,10 +410,10 @@ while cycle:
             Bird.head += 1
 
             if Bird.flying_type == 1:
-                Bird.bird_image.clip_draw(BirdMotion*145, 0, 145, 125, Bird.x, Bird.y, 70, 70)
+                Bird.bird_image.clip_draw(BirdMotion*181, 0, 181, 179, Bird.x, Bird.y, 70, 70)
                 Bird.x += 4
             else:
-                Bird.bird_image.clip_composite_draw(BirdMotion * 145, 0, 145, 125, 0, 'h', Bird.x, Bird.y, 70, 70)
+                Bird.bird_image.clip_composite_draw(BirdMotion * 181, 0, 181, 179, 0, 'h', Bird.x, Bird.y, 70, 70)
                 Bird.x -= 4
 
         #원판 날아오기
@@ -516,11 +516,11 @@ while cycle:
         grass_base.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
         if end_sound == True:
             end_sound = False
-            if score >= 500:
+            if score >= 300:
                 high_score.play()
-            elif score < 500 and score >= 150:
+            elif score < 300 and score >= 100:
                 middle_score.play()
-            elif score < 150:
+            elif score < 100:
                 low_score.play()
 
 
