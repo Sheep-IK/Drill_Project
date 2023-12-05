@@ -106,6 +106,7 @@ open_canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 start_base = load_image('Start Base.PNG')
 grass_base = load_image('Base Grass.png')
 close_up = load_image('Close Up Start.png')
+guide = load_image('guide.png')
 
 shotgun_targeting_s = load_image('shotgun_targeting_s.png')
 shotgun_targeting_m = load_image('aim_m.png')
@@ -157,6 +158,7 @@ startpage = True
 mainpage = False
 endpage = False
 Pck = False
+Gck = False
 
 Fbird = True
 Bck = False
@@ -214,6 +216,7 @@ def handle_event():
     global P_speed
     global P_down
     global P_max
+    global Gck
 
     events = get_events()
     for event in events:
@@ -224,6 +227,11 @@ def handle_event():
                 startpage = False
                 mainpage = True
                 start_timer = get_time()
+            elif startpage == True and mx >= 650 and mx <= 750 and my >= 500 and my <= 600:
+                if Gck == False:
+                    Gck = True
+                else:
+                    Gck = False
             if mainpage == True:
                 if First_shoot:
                     First_shoot = False
@@ -337,6 +345,10 @@ while cycle:
         level_font.draw(50, 60, f'Easy!', (0, 0, 0))
         level_font.draw(CANVAS_WIDTH // 2 - 100, 60, f'Normal!', (0, 0, 0))
         level_font.draw(CANVAS_WIDTH - 200, 60, f'Hard!', (0, 0, 0))
+
+        if Gck == True:
+            guide.draw(CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2, CANVAS_WIDTH, CANVAS_HEIGHT)
+        score_font.draw(630, 550, f'Guide!', (0, 0, 0))
 
         handle_event()
         if mx >= 200 and mx <= 610 and my >= 125 and my <= 400:
